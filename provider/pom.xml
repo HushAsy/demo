@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hush.k8s</groupId>
+    <artifactId>provider</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>provider</name>
+    <description>Demo project for Spring Boot</description>
+
+    <parent>
+        <artifactId>demo</artifactId>
+        <groupId>org.hush.k8s</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+         <dependency>
+            <groupId>com.alibaba.spring.boot</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hush.k8s</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.101tec</groupId>
+            <artifactId>zkclient</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.12</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.11</version>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
+        <finalName>dubbo_provider</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${springBoot.version}</version>
+                <configuration>
+                    <!-- 指定该Main Class为全局的唯一入口 -->
+                    <mainClass>org.hush.k8s.provider.ProviderApplication</mainClass>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+              <groupId>com.spotify</groupId>
+              <artifactId>docker-maven-plugin</artifactId>
+              <version>1.1.1</version>
+              <configuration>
+                <imageName>hush/dubbo_provider</imageName>
+                <baseImage>registry.cn-hangzhou.aliyuncs.com/hush/basecontainer:20180929</baseImage>
+                <!--<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>-->
+                <entryPoint>ENTRYPOINT ["/bin/bash", "/home/admin/start.sh"]</entryPoint>
+                <!-- copy the service's jar file from target into the root directory of the image -->
+                <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                <!--<dockerHost>https://192.168.99.100:2376</dockerHost>-->
+                <dockerHost>https://192.168.99.100:2376</dockerHost>
+                <dockerCertPath>C:\Users\Administrator\.docker\machine\machines\default</dockerCertPath>
+                <resources>
+                   <resource>
+                     <targetPath>/</targetPath>
+                     <directory>${project.build.directory}</directory>
+                     <include>${project.build.finalName}.jar</include>
+                   </resource>
+                </resources>
+                <forceTags>true</forceTags>
+                <imageTags>
+                   <imageTag>1.0.3</imageTag>
+                   <imageTag>latest</imageTag>
+                </imageTags>
+                <serverId>docker-hub</serverId>
+                <registryUrl>registry.cn-hangzhou.aliyuncs.com</registryUrl>
+              </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

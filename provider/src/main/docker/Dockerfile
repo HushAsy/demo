@@ -1,0 +1,15 @@
+FROM registry.cn-hangzhou.aliyuncs.com/hush/basecontainer:20180929
+
+#添加本地jar包
+RUN mkdir -p /home/admin/app/
+RUN mkdir -p /home/admin/tomcat/
+ENV CATALINA_HOME /home/admin/tomcat/
+#
+ADD dubbo_provider.jar /home/admin/app/
+#
+#
+#
+# 将启动命令写入启动脚本 start.sh
+RUN echo '$JAVA_HOME/bin/java -jar $JAVA_OPTS -Ddubbo.address.ip=$POD_IP -Djava.security.egd=file:/dev/./urandom  "/home/admin/app/dubbo_provider.jar" --spring.profiles.active=prod' > /home/admin/start.sh && chmod +x /home/admin/start.sh
+WORKDIR $CATALINA_HOME
+ENTRYPOINT ["/bin/bash", "/home/admin/start.sh"]
