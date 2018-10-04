@@ -29,13 +29,13 @@ public class StringUtils {
                 }
             }
         };
-        if (null != zk1){
+        if (null != zk1 && !"127.0.0.1".equals(zk1)){
             stringList.add(zk1);
         }
-        if (null != zk2){
+        if (null != zk2 && !"127.0.0.1".equals(zk2)){
             stringList.add(zk2);
         }
-        if (null != zk3){
+        if (null != zk3 && !"127.0.0.1".equals(zk3)){
             stringList.add(zk3);
         }
         return stringList.toString();
