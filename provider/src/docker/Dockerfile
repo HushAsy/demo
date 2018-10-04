@@ -5,7 +5,9 @@ RUN mkdir -p /home/admin/app/
 RUN mkdir -p /home/admin/tomcat/
 ENV CATALINA_HOME /home/admin/tomcat/
 #
-ADD dubbo_provider.jar /home/admin/app/
+ARG JAR_FILE
+
+ADD target/${JAR_FILE} /home/admin/app/
 #
 #
 #

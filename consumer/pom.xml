@@ -58,10 +58,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -84,8 +80,62 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.4</version>
+                <executions>
+                    <!--<execution>-->
+                        <!--<id>package_image</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>build</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                    <!--<execution>-->
+                        <!--<id>deploy_image</id>-->
+                        <!--<phase>deploy</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>push</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.activation</groupId>
+                        <artifactId>activation</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <contextDirectory>${project.basedir}</contextDirectory>
+                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                    <repository>${registryUrl}/hush/${project.build.finalName}</repository>
+                    <tag>${imageVersion}</tag>
+                    <buildArgs>
+                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>proficio-repository</id>
+            <name>Proficio Repository</name>
+            <url>file://${basedir}/target/deploy</url>
+        </repository>
+    </distributionManagement>
+
+
 
 
 </project>

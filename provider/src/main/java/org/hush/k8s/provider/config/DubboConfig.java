@@ -3,6 +3,7 @@ package org.hush.k8s.provider.config;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ProtocolConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
+import org.hush.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +53,7 @@ public class DubboConfig {
     @Bean
     public RegistryConfig registryConfig(){
         RegistryConfig registryConfig = new RegistryConfig();
-        String address = getAddress(zkAddress1, zkAddress2, zkAddress3);
+        String address = StringUtils.getConfigZkAddress(zkAddress1, zkAddress2, zkAddress3);
         registryConfig.setAddress(address);
         registryConfig.setPort(registryPort);
         registryConfig.setProtocol(registryProtocol);
@@ -75,33 +76,4 @@ public class DubboConfig {
         return applicationConfig;
     }
 
-    private String getAddress(String zk1, String zk2, String zk3){
-        List<String> stringList = new ArrayList<String>(){
-            @Override
-            public String toString() {
-                Iterator<String> it = iterator();
-                if (! it.hasNext())
-                    return "[]";
-
-                StringBuilder sb = new StringBuilder();
-                for (;;) {
-                    String e = it.next();
-                    sb.append(e);
-                    if (! it.hasNext())
-                        return sb.toString();
-                    sb.append(',');
-                }
-            }
-        };
-        if (null != zk1){
-            stringList.add(zk1);
-        }
-        if (null != zk2){
-            stringList.add(zk2);
-        }
-        if (null != zk3){
-            stringList.add(zk3);
-        }
-        return stringList.toString();
-    }
 }

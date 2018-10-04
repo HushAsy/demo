@@ -19,6 +19,5 @@ public class ProviderApplication {
         System.setProperty("dubbo.application.logger", "slf4j");
         SpringApplication.run(ProviderApplication.class, args);
         downLatch.await();
-
     }
 }

@@ -101,38 +101,48 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
-              <groupId>com.spotify</groupId>
-              <artifactId>docker-maven-plugin</artifactId>
-              <version>1.1.1</version>
-              <configuration>
-                <imageName>hush/dubbo_provider</imageName>
-                <baseImage>registry.cn-hangzhou.aliyuncs.com/hush/basecontainer:20180929</baseImage>
-                <!--<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>-->
-                <entryPoint>ENTRYPOINT ["/bin/bash", "/home/admin/start.sh"]</entryPoint>
-                <!-- copy the service's jar file from target into the root directory of the image -->
-                <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
-                <!--<dockerHost>https://192.168.99.100:2376</dockerHost>-->
-                <dockerHost>https://192.168.99.100:2376</dockerHost>
-                <dockerCertPath>C:\Users\Administrator\.docker\machine\machines\default</dockerCertPath>
-                <resources>
-                   <resource>
-                     <targetPath>/</targetPath>
-                     <directory>${project.build.directory}</directory>
-                     <include>${project.build.finalName}.jar</include>
-                   </resource>
-                </resources>
-                <forceTags>true</forceTags>
-                <imageTags>
-                   <imageTag>1.0.3</imageTag>
-                   <imageTag>latest</imageTag>
-                </imageTags>
-                <serverId>docker-hub</serverId>
-                <registryUrl>registry.cn-hangzhou.aliyuncs.com</registryUrl>
-              </configuration>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.4</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.activation</groupId>
+                        <artifactId>activation</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <contextDirectory>${project.basedir}</contextDirectory>
+                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                    <repository>${registryUrl}/hush/${project.build.finalName}</repository>
+                    <tag>${imageVersion}</tag>
+                    <buildArgs>
+                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
             </plugin>
 
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>proficio-repository</id>
+            <name>Proficio Repository</name>
+            <url>file://${basedir}/target/deploy</url>
+        </repository>
+    </distributionManagement>
+
 
 </project>
